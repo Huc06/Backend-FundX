@@ -1,9 +1,14 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { CreateMilestoneDto } from './dto/create-milestone.dto';
 import { UpdateVoteResultDto } from './dto/update-vote-result.dto';
+import type { IDatabaseService } from '../database/interfaces/database.interface';
 
 @Injectable()
 export class MilestonesService {
+  constructor(
+    @Inject('DATABASE_SERVICE')
+    private readonly databaseService: IDatabaseService,
+  ) {}
   /**
    * Create a new milestone for a campaign
    * TODO: Implement database logic with Walrus
@@ -34,12 +39,11 @@ export class MilestonesService {
       currency: createMilestoneDto.currency,
     };
 
-    // TODO: Save to Walrus database
-    // const savedMilestone = await this.databaseService.createMilestone(milestone);
+    const savedMilestone = await this.databaseService.createMilestone(milestone);
 
     return {
       is_success: true,
-      data: milestone,
+      data: savedMilestone,
     };
   }
 
@@ -52,29 +56,31 @@ export class MilestonesService {
     milestoneId: string,
     updateVoteResultDto: UpdateVoteResultDto,
   ) {
-    // TODO: Check if milestone exists and status is "in-voting"
-    // const milestone = await this.databaseService.getMilestone(objectId, milestoneId);
+    const milestone = await this.databaseService.getMilestone(objectId, milestoneId);
 
-    // if (!milestone) {
-    //   throw new BadRequestException('Milestone not found');
-    // }
+    if (!milestone) {
+      throw new BadRequestException('Milestone not found');
+    }
 
-    // if (milestone.status !== 'in-voting') {
-    //   return {
-    //     is_success: false,
-    //     message: "Milestone status is not 'in-voting'. Cannot update vote result.",
-    //   };
-    // }
+    if (milestone.status !== 'in-voting') {
+      return {
+        is_success: false,
+        message: "Milestone status is not 'in-voting'. Cannot update vote result.",
+      };
+    }
 
-    // TODO: Update vote_result in Walrus
-    // const currentVoteResult = milestone.vote_result || 0;
-    // const newVoteResult = currentVoteResult + updateVoteResultDto.voteResult;
-    // await this.databaseService.updateMilestoneVoteResult(objectId, milestoneId, newVoteResult);
+    const currentVoteResult = milestone.vote_result || 0;
+    const newVoteResult = currentVoteResult + updateVoteResultDto.voteResult;
+    await this.databaseService.updateMilestoneVoteResult(
+      objectId,
+      milestoneId,
+      newVoteResult,
+    );
 
     return {
       is_success: true,
       message: `Vote result for campaign ${objectId}, milestone ${milestoneId} updated successfully.`,
-      new_vote_result: updateVoteResultDto.voteResult,
+      new_vote_result: newVoteResult,
     };
   }
 
@@ -83,22 +89,20 @@ export class MilestonesService {
    * TODO: Implement database logic with Walrus
    */
   async updateIsClaimed(objectId: string, milestoneId: string) {
-    // TODO: Check if milestone exists and status is "approved"
-    // const milestone = await this.databaseService.getMilestone(objectId, milestoneId);
+    const milestone = await this.databaseService.getMilestone(objectId, milestoneId);
 
-    // if (!milestone) {
-    //   throw new BadRequestException('Milestone not found');
-    // }
+    if (!milestone) {
+      throw new BadRequestException('Milestone not found');
+    }
 
-    // if (milestone.status !== 'approved') {
-    //   return {
-    //     is_success: false,
-    //     message: "Milestone status is not 'approved'. Cannot update is_claimed.",
-    //   };
-    // }
+    if (milestone.status !== 'approved') {
+      return {
+        is_success: false,
+        message: "Milestone status is not 'approved'. Cannot update is_claimed.",
+      };
+    }
 
-    // TODO: Update is_claimed in Walrus
-    // await this.databaseService.updateMilestoneIsClaimed(objectId, milestoneId, true);
+    await this.databaseService.updateMilestoneIsClaimed(objectId, milestoneId, true);
 
     return {
       is_success: true,
@@ -111,14 +115,13 @@ export class MilestonesService {
    * TODO: Implement database logic with Walrus
    */
   async getMilestonesByCampaign(objectId: string) {
-    // TODO: Fetch milestones from Walrus
-    // const milestones = await this.databaseService.getMilestonesByObjectId(objectId);
+    const milestones = await this.databaseService.getMilestonesByObjectId(objectId);
 
     return {
       is_success: true,
       data: {
         object_id: objectId,
-        milestones: [],
+        milestones: milestones || [],
       },
     };
   }

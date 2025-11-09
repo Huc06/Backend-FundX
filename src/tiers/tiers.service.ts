@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateTierDto } from './dto/create-tier.dto';
+import type { IDatabaseService } from '../database/interfaces/database.interface';
 
 @Injectable()
 export class TiersService {
+  constructor(
+    @Inject('DATABASE_SERVICE')
+    private readonly databaseService: IDatabaseService,
+  ) {}
+
   /**
    * Create a new tier for a campaign
-   * TODO: Implement database logic with Walrus
    */
   async createTier(createTierDto: CreateTierDto) {
     const tier = {
@@ -17,12 +22,11 @@ export class TiersService {
       description: createTierDto.description,
     };
 
-    // TODO: Save to Walrus database
-    // const savedTier = await this.databaseService.createTier(tier);
+    const savedTier = await this.databaseService.createTier(tier);
 
     return {
       is_success: true,
-      data: tier,
+      data: savedTier,
     };
   }
 }

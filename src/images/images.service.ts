@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateImageDto } from './dto/create-image.dto';
+import type { IDatabaseService } from '../database/interfaces/database.interface';
 
 @Injectable()
 export class ImagesService {
+  constructor(
+    @Inject('DATABASE_SERVICE')
+    private readonly databaseService: IDatabaseService,
+  ) {}
+
   /**
    * Create/upload an image for a campaign
-   * TODO: Implement database logic with Walrus
    */
   async createImage(createImageDto: CreateImageDto) {
     const image = {
@@ -15,13 +20,11 @@ export class ImagesService {
       created_at: new Date().toISOString(),
     };
 
-    // TODO: Save to Walrus database
-    // const savedImage = await this.databaseService.createImage(image);
+    const savedImage = await this.databaseService.createImage(image);
 
-    // For now, return the prepared data
     return {
       is_success: true,
-      data: image,
+      data: savedImage,
     };
   }
 }
