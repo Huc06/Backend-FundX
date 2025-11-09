@@ -10,6 +10,43 @@ http://localhost:3000
 ### 🏠 Root
 - **GET** `/` - Welcome message
 
+### ❤️ Health Check
+
+#### Basic Health Check
+- **GET** `/health`
+- **Response:**
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-11-09T06:45:18.888Z",
+  "uptime": 2.958539459,
+  "environment": "development",
+  "version": "1.0.0"
+}
+```
+
+#### Detailed Health Check
+- **GET** `/health/detailed`
+- **Response:**
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-11-09T06:45:19.374Z",
+  "uptime": 3.444321459,
+  "environment": "development",
+  "version": "1.0.0",
+  "memory": {
+    "used": 25.32,
+    "total": 51.84,
+    "unit": "MB"
+  },
+  "cpu": {
+    "user": 366829,
+    "system": 110151
+  }
+}
+```
+
 ### 📢 Campaigns
 
 #### Create Campaign
