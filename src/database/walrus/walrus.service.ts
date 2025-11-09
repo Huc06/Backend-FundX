@@ -41,6 +41,11 @@ export class WalrusService implements IDatabaseService, OnModuleInit {
       return result.blobId;
     } catch (error) {
       this.logger.error(`Error storing blob in Walrus: ${error.message}`);
+      // In development, return a mock blob ID if Walrus is unavailable
+      if (process.env.NODE_ENV === 'development') {
+        this.logger.warn('Development mode: Using mock blob ID');
+        return `mock-blob-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      }
       throw error;
     }
   }
@@ -98,6 +103,7 @@ export class WalrusService implements IDatabaseService, OnModuleInit {
       this.logger.warn(
         `No index blob ID found for collection ${collectionName}. Returning empty array.`,
       );
+      // In development, return empty array (expected behavior for first run)
       return [];
     }
 
