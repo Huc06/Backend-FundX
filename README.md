@@ -81,10 +81,12 @@ FundX is a next-generation crowdfunding platform that leverages blockchain techn
 - ✅ **Input Validation** - Comprehensive DTO validation with class-validator
 - ✅ **Error Handling** - Global exception filter with consistent error responses
 - ✅ **Request Logging** - Detailed HTTP request/response logging
-- ✅ **API Documentation** - Interactive Swagger/OpenAPI documentation
+- ✅ **API Documentation** - Interactive Swagger/OpenAPI documentation with full schema
 - ✅ **Health Monitoring** - Health check endpoints for monitoring
 - ✅ **CORS Support** - Configured for cross-origin requests
 - ✅ **Type Safety** - Full TypeScript implementation
+- ✅ **Database Abstraction** - Interface-based database layer for easy swapping
+- ✅ **Walrus Integration** - Decentralized storage with collection management
 
 ---
 
@@ -108,7 +110,10 @@ FundX is a next-generation crowdfunding platform that leverages blockchain techn
 
 ### Database
 
-- **Walrus** - (Coming soon) Decentralized database solution
+- **Walrus** - Decentralized storage protocol on Sui blockchain
+  - Collection-based storage architecture
+  - Blob ID indexing system
+  - HTTP API integration
 
 ### Development Tools
 
@@ -143,10 +148,11 @@ The application follows NestJS modular architecture with clear separation of con
 
 ### Data Flow
 
-1. **Request** → Controller (Validation)
+1. **Request** → Controller (Validation via DTOs)
 2. **Controller** → Service (Business Logic)
-3. **Service** → Database (Data Persistence) - *Coming soon*
-4. **Response** ← Controller (Formatted Output)
+3. **Service** → Database Service (IDatabaseService interface)
+4. **Database Service** → Walrus (Decentralized Storage)
+5. **Response** ← Controller (Formatted Output)
 
 ### Error Handling
 
@@ -219,6 +225,14 @@ Visit the Swagger UI at `/api/docs` for interactive API documentation:
 ```
 http://localhost:3000/api/docs
 ```
+
+The Swagger documentation includes:
+- ✅ **Complete API Schema** - All endpoints with request/response schemas
+- ✅ **Request Examples** - Sample payloads for all DTOs
+- ✅ **Response Examples** - Success and error response formats
+- ✅ **Parameter Documentation** - Query, path, and body parameters
+- ✅ **Try It Out** - Test endpoints directly from the UI
+- ✅ **Enum Values** - All possible values for enum fields
 
 ### Endpoint Overview
 
@@ -293,6 +307,10 @@ backend-fund-x/
 │   ├── contributions/          # Contribution processing module
 │   ├── tiers/                  # Tier management module
 │   ├── health/                 # Health check module
+│   ├── database/              # Database abstraction layer
+│   │   ├── interfaces/        # IDatabaseService interface
+│   │   ├── walrus/            # Walrus implementation
+│   │   └── database.module.ts # Database module
 │   ├── common/                 # Shared utilities
 │   │   ├── filters/            # Exception filters
 │   │   └── interceptors/       # Request interceptors
@@ -309,9 +327,10 @@ backend-fund-x/
 
 ### Module Responsibilities
 
-- **Controllers** - Handle HTTP requests/responses
+- **Controllers** - Handle HTTP requests/responses, Swagger documentation
 - **Services** - Business logic implementation
-- **DTOs** - Data validation and transformation
+- **DTOs** - Data validation, transformation, and Swagger schema definitions
+- **Database** - Abstraction layer for data persistence (Walrus implementation)
 - **Modules** - Dependency injection and module configuration
 
 ---
@@ -354,10 +373,16 @@ pnpm run test:e2e       # Run end-to-end tests
 PORT=3000
 NODE_ENV=development
 
-# Database (Coming soon)
-# DATABASE_URL=
-# DATABASE_TYPE=walrus
+# Walrus Database
+WALRUS_AGGREGATOR_URL=https://aggregator.walrus.space
+WALRUS_CAMPAIGNS_INDEX=<blob_id>      # Set after first campaign creation
+WALRUS_IMAGES_INDEX=<blob_id>         # Set after first image upload
+WALRUS_MILESTONES_INDEX=<blob_id>     # Set after first milestone creation
+WALRUS_CONTRIBUTIONS_INDEX=<blob_id>   # Set after first contribution
+WALRUS_TIERS_INDEX=<blob_id>          # Set after first tier creation
 ```
+
+**Note:** Collection index blob IDs are automatically logged when data is first created. Copy the logged blob ID to the corresponding environment variable.
 
 ---
 
@@ -378,6 +403,8 @@ The project includes a `render.yaml` configuration for easy deployment on Render
 3. **Environment Variables:**
    - `NODE_ENV=production`
    - `PORT` (auto-set by Render)
+   - `WALRUS_AGGREGATOR_URL` - Walrus aggregator endpoint
+   - `WALRUS_*_INDEX` - Collection blob IDs (set after first data creation)
 
 #### Manual Configuration
 
@@ -400,27 +427,40 @@ open https://your-app.onrender.com/api/docs
 
 ### Production Checklist
 
-- [ ] Environment variables configured
-- [ ] Health check endpoint working
-- [ ] API documentation accessible
-- [ ] Error logging configured
-- [ ] Database connection ready (when implemented)
+- [x] Environment variables configured
+- [x] Health check endpoint working
+- [x] API documentation accessible
+- [x] Error logging configured
+- [x] Database connection ready (Walrus integrated)
 - [ ] CORS settings updated for production domain
+- [ ] Walrus collection indexes configured
 
 ---
 
 ## 🔮 Roadmap
 
-### Coming Soon
+### ✅ Completed
 
-- [ ] **Walrus Database Integration** - Decentralized data storage
+- [x] **Walrus Database Integration** - Decentralized data storage with collection management
+- [x] **Swagger Documentation** - Complete API documentation with schemas and examples
+- [x] **Database Abstraction Layer** - Interface-based design for easy database swapping
+- [x] **Error Handling** - Global exception filter with consistent responses
+- [x] **Request Logging** - Comprehensive HTTP request/response logging
+- [x] **Input Validation** - DTO-based validation with class-validator
+
+### 🚧 In Progress
+
+- [ ] **Unit & E2E Tests** - Comprehensive test coverage
+
+### 📋 Coming Soon
+
 - [ ] **Authentication & Authorization** - JWT-based auth system
 - [ ] **Blockchain Integration** - Smart contract interactions
 - [ ] **WebSocket Support** - Real-time updates
 - [ ] **Rate Limiting** - API protection
 - [ ] **Caching Layer** - Performance optimization
-- [ ] **Unit & E2E Tests** - Comprehensive test coverage
 - [ ] **CI/CD Pipeline** - Automated deployment
+- [ ] **Database Migrations** - Schema versioning for Walrus collections
 
 ---
 
