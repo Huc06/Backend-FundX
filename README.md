@@ -76,6 +76,12 @@ FundX is a next-generation crowdfunding platform that leverages blockchain techn
   - Set limits and track current usage
   - Tier-based rewards
 
+- **User Profile System**
+  - User profile with statistics
+  - Track campaigns created by user
+  - View contribution history with campaign details
+  - Aggregate contribution amounts
+
 ### Technical Features
 
 - ✅ **Input Validation** - Comprehensive DTO validation with class-validator
@@ -260,6 +266,11 @@ The Swagger documentation includes:
 #### Tiers
 - `POST /add-tier` - Add contribution tier
 
+#### Profile
+- `GET /profile/me?address=<wallet>` - Get user profile statistics
+- `GET /profile/me/created-campaigns?address=<wallet>` - Get campaigns created by user
+- `GET /profile/me/contributions?address=<wallet>` - Get user contributions with campaign details
+
 #### Health
 - `GET /health` - Basic health check
 - `GET /health/detailed` - Detailed system status
@@ -306,6 +317,10 @@ backend-fund-x/
 │   ├── milestones/             # Milestone management module
 │   ├── contributions/          # Contribution processing module
 │   ├── tiers/                  # Tier management module
+│   ├── profile/                # User profile module
+│   │   ├── profile.controller.ts
+│   │   ├── profile.service.ts
+│   │   └── profile.module.ts
 │   ├── health/                 # Health check module
 │   ├── database/              # Database abstraction layer
 │   │   ├── interfaces/        # IDatabaseService interface

@@ -43,7 +43,9 @@ async function bootstrap() {
     .addTag('Milestones', 'Milestone management endpoints')
     .addTag('Contributions', 'Contribution management endpoints')
     .addTag('Tiers', 'Tier management endpoints')
+    .addTag('Profile', 'User profile and statistics endpoints')
     .addTag('Health', 'Health check endpoints')
+    .addTag('Root', 'Root endpoints')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
