@@ -10,6 +10,8 @@ import { ContributionsModule } from './contributions/contributions.module';
 import { TiersModule } from './tiers/tiers.module';
 import { HealthModule } from './health/health.module';
 import { ProfileModule } from './profile/profile.module';
+import { ServicesModule } from './services/services.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { ProfileModule } from './profile/profile.module';
     TiersModule,
     HealthModule,
     ProfileModule,
+    ServicesModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

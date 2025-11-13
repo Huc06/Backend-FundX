@@ -1,71 +1,35 @@
-import { IsString, IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsNotEmpty,
+  IsUUID,
+  IsArray,
+  ValidateNested,
+  IsIn,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { CreateStorySectionDto } from './create-story-section.dto';
+import { CreateRoadmapPhaseDto } from './create-roadmap-phase.dto';
+import { CreateTeamMemberDto } from './create-team-member.dto';
+import { CreateGalleryImageDto } from './create-gallery-image.dto';
 
 export class CreateCampaignDto {
   @ApiProperty({
-    description: 'Blob ID from Walrus storage',
-    example: 'blob-123456',
+    description: 'Creator user ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
-  blobId: string;
-
-  @ApiProperty({
-    description: 'Creator wallet address',
-    example: '0x1234567890abcdef1234567890abcdef12345678',
-  })
-  @IsString()
-  @IsNotEmpty()
-  creatorAddress: string;
+  creator_id: string;
 
   @ApiPropertyOptional({
-    description: 'Creator name',
-    example: 'John Doe',
+    description: 'The object ID on the Sui blockchain.',
   })
   @IsString()
   @IsOptional()
-  creatorName?: string;
-
-  @ApiProperty({
-    description: 'Target fundraising amount',
-    example: 10000,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  targetAmount: number;
-
-  @ApiProperty({
-    description: 'Campaign duration in days',
-    example: 30,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  duration: number;
-
-  @ApiProperty({
-    description: 'Reward type',
-    example: 'equity',
-    enum: ['equity', 'product', 'token'],
-  })
-  @IsString()
-  @IsNotEmpty()
-  rewardType: string;
-
-  @ApiProperty({
-    description: 'Currency code',
-    example: 'SUI',
-  })
-  @IsString()
-  @IsNotEmpty()
-  currency: string;
-
-  @ApiPropertyOptional({
-    description: 'Campaign description',
-    example: 'A revolutionary product that will change the world',
-  })
-  @IsString()
-  @IsOptional()
-  description?: string;
+  on_chain_object_id?: string;
 
   @ApiProperty({
     description: 'Campaign title',
@@ -75,21 +39,12 @@ export class CreateCampaignDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({
-    description: 'Transaction hash from blockchain',
-    example: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+  @ApiPropertyOptional({
+    description: 'A brief summary for campaign cards.',
   })
   @IsString()
-  @IsNotEmpty()
-  txHash: string;
-
-  @ApiProperty({
-    description: 'Campaign object ID on blockchain',
-    example: '0x9876543210fedcba9876543210fedcba98765432',
-  })
-  @IsString()
-  @IsNotEmpty()
-  objectId: string;
+  @IsOptional()
+  short_description?: string;
 
   @ApiProperty({
     description: 'Campaign category',
@@ -98,4 +53,63 @@ export class CreateCampaignDto {
   @IsString()
   @IsNotEmpty()
   category: string;
+
+  @ApiProperty({
+    description: 'Target fundraising amount',
+    example: 10000,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  goal_amount: number;
+
+  @ApiPropertyOptional({
+    description: 'Currency code',
+    example: 'USD',
+    default: 'USD',
+  })
+  @IsString()
+  @IsOptional()
+  currency?: string;
+
+  @ApiProperty({
+    description: 'Campaign duration in days',
+    example: 30,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  duration_days: number;
+
+  @ApiPropertyOptional({
+    description: 'Reward type',
+    example: 'none',
+    enum: ['none', 'token', 'nft'],
+    default: 'none',
+  })
+  @IsIn(['none', 'token', 'nft'])
+  @IsOptional()
+  reward_type?: 'none' | 'token' | 'nft';
+
+  @ApiProperty({ type: [CreateStorySectionDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateStorySectionDto)
+  story_sections: CreateStorySectionDto[];
+
+  @ApiProperty({ type: [CreateRoadmapPhaseDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRoadmapPhaseDto)
+  roadmap_phases: CreateRoadmapPhaseDto[];
+
+  @ApiProperty({ type: [CreateTeamMemberDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateTeamMemberDto)
+  team_members: CreateTeamMemberDto[];
+
+  @ApiProperty({ type: [CreateGalleryImageDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateGalleryImageDto)
+  gallery_images: CreateGalleryImageDto[];
 }

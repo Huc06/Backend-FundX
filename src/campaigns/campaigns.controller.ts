@@ -19,35 +19,31 @@ import { CampaignsService } from './campaigns.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 
 @ApiTags('Campaigns')
-@Controller()
+@Controller('campaigns')
 export class CampaignsController {
   constructor(private readonly campaignsService: CampaignsService) {}
 
-  @Post('create-campaign')
-  @HttpCode(HttpStatus.OK)
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new fundraising campaign' })
   @ApiBody({ type: CreateCampaignDto })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Campaign created successfully',
     schema: {
       example: {
         is_success: true,
         data: {
-          blob_id: 'campaign-123',
-          campaign_name: 'My Campaign',
-          creator_address: '0x123...',
-          goal: 10000,
-          current_amount: 0,
+          campaign_id: '00000000-0000-0000-0000-000000000000',
         },
       },
     },
   })
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async createCampaign(@Body() createCampaignDto: CreateCampaignDto) {
+  async create(@Body() createCampaignDto: CreateCampaignDto) {
     try {
-      return await this.campaignsService.createCampaign(createCampaignDto);
+      return await this.campaignsService.create(createCampaignDto);
     } catch (error) {
       return {
         is_success: false,

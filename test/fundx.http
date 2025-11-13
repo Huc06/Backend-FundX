@@ -1,0 +1,116 @@
+
+### Create a new campaign
+POST http://localhost:3000/campaigns
+Content-Type: application/json
+
+{
+  "creator_id": "5139ad64-31b4-4842-a43d-002dcc5e4816",
+  "on_chain_object_id": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+  "title": "My Awesome Blockchain Game",
+  "short_description": "A revolutionary decentralized gaming experience.",
+  "category": "gaming",
+  "goal_amount": 50000.00,
+  "currency": "USD",
+  "duration_days": 60,
+  "reward_type": "token",
+  "story_sections": [
+    {
+      "title": "Our Vision",
+      "content": "We aim to create an immersive blockchain game that empowers players with true ownership of in-game assets.",
+      "display_order": 1
+    },
+    {
+      "title": "Gameplay Mechanics",
+      "content": "Explore vast open worlds, battle unique creatures, and trade rare NFTs with other players.",
+      "display_order": 2
+    }
+  ],
+  "roadmap_phases": [
+    {
+      "title": "Phase 1: Core Development",
+      "timeline": "Q1 2024",
+      "description": "Develop smart contracts, basic game engine, and initial character models.",
+      "state": "in-progress",
+      "display_order": 1
+    },
+    {
+      "title": "Phase 2: Alpha Launch",
+      "timeline": "Q3 2024",
+      "description": "Release alpha version to early backers for testing and feedback.",
+      "state": "future",
+      "display_order": 2
+    }
+  ],
+  "team_members": [
+    {
+      "name": "Alice Smith",
+      "role": "Lead Developer",
+      "contact_info": {
+        "email": "alice@example.com",
+        "twitter": "@alicesmithdev"
+      }
+    },
+    {
+      "name": "Bob Johnson",
+      "role": "Game Designer",
+      "contact_info": {
+        "linkedin": "linkedin.com/in/bobjohnson"
+      }
+    }
+  ],
+  "gallery_images": [
+    {
+      "image_url": "https://example.com/images/game_screenshot_1.jpg",
+      "is_cover": true
+    },
+    {
+      "image_url": "https://example.com/images/concept_art_2.png",
+      "is_cover": false
+    }
+  ]
+}
+
+### Create a new event
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+  "creator_id": "5139ad64-31b4-4842-a43d-002dcc5e4816",
+  "name": "My Tech Conference 2025",
+  "description": "A conference about the future of technology.",
+  "start_time": "2025-12-01T09:00:00Z",
+  "end_time": "2025-12-03T17:00:00Z",
+  "funding_deadline": "2025-11-01T23:59:59Z",
+  "timezone": "America/Los_Angeles",
+  "location": "San Francisco, CA",
+  "visibility": "public",
+  "target_amount": 100000.00,
+  "reward_type": "nft",
+  "capacity": 500,
+  "ticket_price": 299.00,
+  "milestones": [
+    {
+      "title": "Venue Secured",
+      "description": "Secure the venue for the conference.",
+      "funding_goal": 20000.00,
+      "status": "pending"
+    },
+    {
+      "title": "Speakers Confirmed",
+      "description": "Confirm all keynote speakers.",
+      "funding_goal": 50000.00,
+      "status": "pending"
+    }
+  ],
+  "services": [
+    "venue-conference-hall",
+    "merch-tshirts",
+    "food-catering-full"
+  ],
+  "gallery_images": [
+    {
+      "image_url": "https://example.com/images/event_image_1.jpg",
+      "is_cover": true
+    }
+  ]
+}

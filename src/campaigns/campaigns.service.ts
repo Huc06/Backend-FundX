@@ -12,37 +12,31 @@ export class CampaignsService {
   /**
    * Create a new campaign
    */
-  async createCampaign(createCampaignDto: CreateCampaignDto) {
-    const now = new Date();
-    const endAt = new Date(
-      now.getTime() + createCampaignDto.duration * 24 * 60 * 60 * 1000,
-    );
-
-    const campaign = {
-      blob_id: createCampaignDto.blobId,
-      created_at: now.toISOString(),
-      creator_address: createCampaignDto.creatorAddress,
-      creator: createCampaignDto.creatorName,
-      goal: createCampaignDto.targetAmount,
-      reward_type: createCampaignDto.rewardType,
-      is_completed: false,
-      currency: createCampaignDto.currency,
-      current_amount: 0,
-      start_at: now.toISOString(),
-      end_at: endAt.toISOString(),
-      is_pending: false,
-      description: createCampaignDto.description,
-      campaign_name: createCampaignDto.title,
-      object_id: createCampaignDto.objectId,
-      tx_hash: createCampaignDto.txHash,
+  async create(createCampaignDto: CreateCampaignDto) {
+    const campaignData = {
+      creator_id: createCampaignDto.creator_id,
+      on_chain_object_id: createCampaignDto.on_chain_object_id,
+      title: createCampaignDto.title,
+      short_description: createCampaignDto.short_description,
       category: createCampaignDto.category,
+      goal_amount: createCampaignDto.goal_amount,
+      currency: createCampaignDto.currency || 'USD',
+      duration_days: createCampaignDto.duration_days,
+      reward_type: createCampaignDto.reward_type || 'none',
+      story_sections: createCampaignDto.story_sections,
+      roadmap_phases: createCampaignDto.roadmap_phases,
+      team_members: createCampaignDto.team_members,
+      gallery_images: createCampaignDto.gallery_images,
     };
 
-    const savedCampaign = await this.databaseService.createCampaign(campaign);
+    const newCampaign =
+      await this.databaseService.createCampaignWithDetails(campaignData);
 
     return {
       is_success: true,
-      data: savedCampaign,
+      data: {
+        campaign_id: newCampaign.id,
+      },
     };
   }
 
@@ -51,13 +45,13 @@ export class CampaignsService {
    */
   async getCampaigns(limit: number = 10, offset: number = 0) {
     const campaigns = await this.databaseService.getCampaigns(limit, offset);
-
     const enrichedCampaigns = await Promise.all(
       campaigns.map(async (campaign) => {
-        const campaignId = campaign.blob_id;
+        const campaignId = campaign.id;
 
         // Get images
-        const images = await this.databaseService.getImagesByCampaignId(campaignId);
+        const images =
+          await this.databaseService.getImagesByCampaignId(campaignId);
 
         // Get contributions
         const contributions =
@@ -83,14 +77,16 @@ export class CampaignsService {
    * Get campaigns by creator address
    */
   async getCampaignsByCreator(creatorAddress: string) {
-    const campaigns = await this.databaseService.getCampaignsByCreator(creatorAddress);
+    const campaigns =
+      await this.databaseService.getCampaignsByCreator(creatorAddress);
 
     const enrichedCampaigns = await Promise.all(
       campaigns.map(async (campaign) => {
-        const campaignId = campaign.blob_id;
+        const campaignId = campaign.id;
 
         // Get images
-        const images = await this.databaseService.getImagesByCampaignId(campaignId);
+        const images =
+          await this.databaseService.getImagesByCampaignId(campaignId);
 
         // Get contributions
         const contributions =
@@ -121,22 +117,26 @@ export class CampaignsService {
    */
   async getVotingCampaigns(limit: number = 10, offset: number = 0) {
     const allCampaigns = await this.databaseService.getCampaigns(1000, 0);
-    const completedCampaigns = allCampaigns.filter((c) => c.is_completed === true);
+    const completedCampaigns = allCampaigns.filter(
+      (c) => c.is_completed === true,
+    );
 
     const enrichedCampaigns: any[] = [];
 
     for (const campaign of completedCampaigns.slice(offset, offset + limit)) {
-      const campaignId = campaign.blob_id;
+      const campaignId = campaign.id;
 
       // Get milestones with status 'in-voting'
-      const milestones = await this.databaseService.getMilestonesByCampaignIdAndStatus(
-        campaignId,
-        'in-voting',
-      );
+      const milestones =
+        await this.databaseService.getMilestonesByCampaignIdAndStatus(
+          campaignId,
+          'in-voting',
+        );
 
       if (milestones && milestones.length > 0) {
         // Get images
-        const images = await this.databaseService.getImagesByCampaignId(campaignId);
+        const images =
+          await this.databaseService.getImagesByCampaignId(campaignId);
 
         enrichedCampaigns.push({
           ...campaign,
@@ -157,14 +157,24 @@ export class CampaignsService {
   /**
    * Get campaign by object_id
    */
-  async getCampaignById(objectId: string) {
-    const campaign = await this.databaseService.getCampaignByObjectId(objectId);
+  async getCampaignById(id: string) {
+    const isUUID =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        id,
+      );
 
-    if (!campaign) {
-      throw new NotFoundException(`Campaign with id ${objectId} not found`);
+    let campaign;
+    if (isUUID) {
+      campaign = await this.databaseService.getCampaignByDbId(id);
+    } else {
+      campaign = await this.databaseService.getCampaignByObjectId(id);
     }
 
-    const campaignId = campaign.blob_id;
+    if (!campaign) {
+      throw new NotFoundException(`Campaign with id ${id} not found`);
+    }
+
+    const campaignId = campaign.id;
 
     // Get images
     const images = await this.databaseService.getImagesByCampaignId(campaignId);
@@ -173,14 +183,29 @@ export class CampaignsService {
     const contributions =
       await this.databaseService.getContributionsByCampaignId(campaignId);
 
+    // Get story sections
+    const storySections =
+      await this.databaseService.getStorySectionsByCampaignId(campaignId);
+
+    // Get roadmap phases
+    const roadmapPhases =
+      await this.databaseService.getRoadmapPhasesByCampaignId(campaignId);
+
+    // Get team members
+    const teamMembers =
+      await this.databaseService.getTeamMembersByCampaignId(campaignId);
+
     return {
       is_success: true,
       data: {
         ...campaign,
         images: images || [],
         contributions: contributions || [],
+        story_sections: storySections || [],
+        roadmap_phases: roadmapPhases || [],
+        team_members: teamMembers || [],
       },
-      object_id: objectId,
+      campaign_id: id,
     };
   }
 }

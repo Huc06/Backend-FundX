@@ -1,31 +1,33 @@
-/**
- * Database abstraction interface
- * Allows easy swapping of database implementations
- */
 export interface IDatabaseService {
-  // Campaign operations
   createCampaign(campaign: any): Promise<any>;
+  createCampaignWithDetails(campaign: any): Promise<any>;
+  createEventWithDetails(event: any): Promise<any>;
   getCampaigns(limit: number, offset: number): Promise<any[]>;
   getCampaignByBlobId(blobId: string): Promise<any | null>;
   getCampaignByObjectId(objectId: string): Promise<any | null>;
+  getCampaignByDbId(id: string): Promise<any | null>;
   getCampaignsByCreator(creatorAddress: string): Promise<any[]>;
-  updateCampaignCurrentAmount(blobId: string, amount: number): Promise<any>;
-
-  // Image operations
+  getEvents(limit: number, offset: number): Promise<any[]>;
+  getEventById(eventId: string): Promise<any | null>;
+  getEventMilestonesByEventId(eventId: string): Promise<any[]>;
+  getEventServicesByEventId(eventId: string): Promise<any[]>;
+  getEventGalleryImagesByEventId(eventId: string): Promise<any[]>;
+  updateCampaignCurrentAmount(id: string, amount: number): Promise<any>;
   createImage(image: any): Promise<any>;
   getImagesByCampaignId(campaignId: string): Promise<any[]>;
-
-  // Milestone operations
+  getStorySectionsByCampaignId(campaignId: string): Promise<any[]>;
+  getRoadmapPhasesByCampaignId(campaignId: string): Promise<any[]>;
+  getTeamMembersByCampaignId(campaignId: string): Promise<any[]>;
   createMilestone(milestone: any): Promise<any>;
   getMilestonesByObjectId(objectId: string): Promise<any[]>;
-  getMilestone(objectId: string, milestoneId: string): Promise<any | null>;
+  getMilestone(campaignId: string, milestoneId: string): Promise<any | null>;
   updateMilestoneVoteResult(
-    objectId: string,
+    campaignId: string,
     milestoneId: string,
     voteResult: number,
   ): Promise<void>;
   updateMilestoneIsClaimed(
-    objectId: string,
+    campaignId: string,
     milestoneId: string,
     isClaimed: boolean,
   ): Promise<void>;
@@ -33,13 +35,8 @@ export interface IDatabaseService {
     campaignId: string,
     status: string,
   ): Promise<any[]>;
-
-  // Contribution operations
   createContribution(contribution: any): Promise<any>;
   getContributionsByAddress(address: string): Promise<any[]>;
   getContributionsByCampaignId(campaignId: string): Promise<any[]>;
-
-  // Tier operations
   createTier(tier: any): Promise<any>;
 }
-
