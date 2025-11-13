@@ -39,4 +39,7 @@ export interface IDatabaseService {
   getContributionsByAddress(address: string): Promise<any[]>;
   getContributionsByCampaignId(campaignId: string): Promise<any[]>;
   createTier(tier: any): Promise<any>;
+  createUser(user: any): Promise<any>;
+  getUserByWalletAddress(walletAddress: string): Promise<any | null>;
+  getUserByEmail(email: string): Promise<any | null>;
 }

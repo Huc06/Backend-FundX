@@ -363,4 +363,34 @@ export class SupabaseService implements IDatabaseService, OnModuleInit {
     this.logger.warn("createTier is not implemented for SupabaseService as 'tiers' table is missing in the schema.");
     return Promise.resolve(tier);
   }
+
+  // User operations
+  async createUser(user: any): Promise<any> {
+    const { data, error } = await this.client.from('users').insert([user]).select();
+    if (error) {
+      this.logger.error(error);
+      throw new Error(error.message);
+    }
+    return data[0];
+  }
+
+  async getUserByWalletAddress(walletAddress: string): Promise<any | null> {
+    const { data, error } = await this.client.from('users').select('*').eq('wallet_address', walletAddress).single();
+    if (error) {
+      this.logger.error(error);
+      if (error.code === 'PGRST116') return null; // No rows found
+      throw new Error(error.message);
+    }
+    return data;
+  }
+
+  async getUserByEmail(email: string): Promise<any | null> {
+    const { data, error } = await this.client.from('users').select('*').eq('email', email).single();
+    if (error) {
+      this.logger.error(error);
+      if (error.code === 'PGRST116') return null; // No rows found
+      throw new Error(error.message);
+    }
+    return data;
+  }
 }

@@ -6,6 +6,7 @@ CREATE TYPE campaign_status AS ENUM ('pending', 'active', 'successful', 'failed'
 CREATE TYPE event_status AS ENUM ('pending', 'active', 'completed', 'cancelled');
 CREATE TYPE reward_type AS ENUM ('none', 'token', 'nft');
 CREATE TYPE roadmap_phase_state AS ENUM ('done', 'in-progress', 'future');
+CREATE TYPE user_role AS ENUM ('admin', 'user');
 
 -- Trigger function to automatically update `updated_at` timestamps
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
@@ -24,6 +25,7 @@ CREATE TABLE users (
     wallet_address VARCHAR(66) UNIQUE NOT NULL,
     username VARCHAR(255) UNIQUE,
     email VARCHAR(255) UNIQUE,
+    role user_role NOT NULL DEFAULT 'user',
     bio TEXT,
     avatar_url VARCHAR(2048),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

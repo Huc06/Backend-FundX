@@ -28,46 +28,48 @@ To make the database more robust, performant, and maintainable, the following Po
     CREATE TYPE campaign_status AS ENUM ('pending', 'active', 'successful', 'failed');
     CREATE TYPE reward_type AS ENUM ('none', 'token', 'nft');
     CREATE TYPE roadmap_phase_state AS ENUM ('done', 'in-progress', 'future');
+    CREATE TYPE user_role AS ENUM ('admin', 'user');
     ```
-
-3.  **Automatic `updated_at` Timestamps**: A trigger function automatically updates the `updated_at` column on any row modification. This removes the burden from the application layer and ensures the timestamp is always current.
-    ```sql
-    CREATE OR REPLACE FUNCTION trigger_set_timestamp()
-    RETURNS TRIGGER AS $$
-    BEGIN
-      NEW.updated_at = NOW();
-      RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
-    ```
-    This trigger would then be applied to each table, for example:
-    ```sql
-    CREATE TRIGGER set_timestamp
-    BEFORE UPDATE ON campaigns
-    FOR EACH ROW
-    EXECUTE PROCEDURE trigger_set_timestamp();
-    ```
-
-4.  **Cascading Deletes**: Foreign key constraints use `ON DELETE CASCADE`. This ensures that when a parent record is deleted (e.g., a `campaign`), all its dependent child records (e.g., `milestones`, `story_sections`) are automatically deleted, maintaining data integrity.
-
-5.  **Indexing Strategy**: Indexes are crucial for query performance. In addition to the default `PRIMARY KEY` indexes, the following should be created:
-    *   **Foreign Keys**: All foreign key columns (e.g., `creator_id`, `campaign_id`) should be indexed.
-    *   **Frequently Queried Columns**: Columns used in `WHERE` clauses, such as `status`, `category`, and `wallet_address`, should be indexed.
-    *   **GIN Indexes for Full-Text Search**: For searching within `TEXT` fields like `title` and `description`, a GIN index is recommended.
-
----
-
-## Table Definitions
-
-### `users`
-
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `UUID` | `PRIMARY KEY DEFAULT gen_random_uuid()` | Unique identifier for the user. |
-| `wallet_address` | `VARCHAR(66)` | `UNIQUE NOT NULL` | The user's public blockchain wallet address. |
-| `username` | `VARCHAR(255)` | `UNIQUE` | A user-chosen display name. |
-| `email` | `VARCHAR(255)` | `UNIQUE` | The user's email address. |
-| `bio` | `TEXT` | | A short user biography. |
+    
+    3.  **Automatic `updated_at` Timestamps**: A trigger function automatically updates the `updated_at` column on any row modification. This removes the burden from the application layer and ensures the timestamp is always current.
+        ```sql
+        CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+        RETURNS TRIGGER AS $
+        BEGIN
+          NEW.updated_at = NOW();
+          RETURN NEW;
+        END;
+        $ LANGUAGE plpgsql;
+        ```
+        This trigger would then be applied to each table, for example:
+        ```sql
+        CREATE TRIGGER set_timestamp
+        BEFORE UPDATE ON campaigns
+        FOR EACH ROW
+        EXECUTE PROCEDURE trigger_set_timestamp();
+        ```
+    
+    4.  **Cascading Deletes**: Foreign key constraints use `ON DELETE CASCADE`. This ensures that when a parent record is deleted (e.g., a `campaign`), all its dependent child records (e.g., `milestones`, `story_sections`) are automatically deleted, maintaining data integrity.
+    
+    5.  **Indexing Strategy**: Indexes are crucial for query performance. In addition to the default `PRIMARY KEY` indexes, the following should be created:
+        *   **Foreign Keys**: All foreign key columns (e.g., `creator_id`, `campaign_id`) should be indexed.
+        *   **Frequently Queried Columns**: Columns used in `WHERE` clauses, such as `status`, `category`, and `wallet_address`, should be indexed.
+        *   **GIN Indexes for Full-Text Search**: For searching within `TEXT` fields like `title` and `description`, a GIN index is recommended.
+    
+    ---
+    
+    ## Table Definitions
+    
+    ### `users`
+    
+    | Column | Type | Constraints | Description |
+    | :--- | :--- | :--- | :--- |
+    | `id` | `UUID` | `PRIMARY KEY DEFAULT gen_random_uuid()` | Unique identifier for the user. |
+    | `wallet_address` | `VARCHAR(66)` | `UNIQUE NOT NULL` | The user's public blockchain wallet address. |
+    | `username` | `VARCHAR(255)` | `UNIQUE` | A user-chosen display name. |
+    | `email` | `VARCHAR(255)` | `UNIQUE` | The user's email address. |
+    | `role` | `user_role` | `NOT NULL DEFAULT 'user'` | The role of the user (e.g., 'admin', 'user'). |
+    | `bio` | `TEXT` | | A short user biography. |
 | `avatar_url` | `VARCHAR(2048)` | | URL to the user's profile picture. |
 | `created_at` | `TIMESTAMPTZ` | `NOT NULL DEFAULT NOW()` | Timestamp of user creation. |
 | `updated_at` | `TIMESTAMPTZ` | `NOT NULL DEFAULT NOW()` | Timestamp of last user update. |

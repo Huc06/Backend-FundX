@@ -1,8 +1,17 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import type { IDatabaseService } from '../database/interfaces/database.interface';
+import { CreateProfileDto, UserRole } from './dto/create-profile.dto';
 
 export interface UserProfile {
-  address: string;
+  id: string;
+  wallet_address: string;
+  username?: string;
+  email?: string;
+  role: UserRole;
+  bio?: string;
+  avatar_url?: string;
+  created_at: Date;
+  updated_at: Date;
   totalCampaignsCreated: number;
   totalContributions: number;
   totalContributionAmount: number;
@@ -19,12 +28,62 @@ export class ProfileService {
     private readonly databaseService: IDatabaseService,
   ) {}
 
+  async createProfile(createProfileDto: CreateProfileDto): Promise<any> {
+    const existingUserByWallet = await this.databaseService.getUserByWalletAddress(createProfileDto.walletAddress);
+    if (existingUserByWallet) {
+      throw new BadRequestException('User with this wallet address already exists.');
+    }
+
+    if (createProfileDto.email) {
+      const existingUserByEmail = await this.databaseService.getUserByEmail(createProfileDto.email);
+      if (existingUserByEmail) {
+        throw new BadRequestException('User with this email already exists.');
+      }
+    }
+
+    const newUser = {
+      wallet_address: createProfileDto.walletAddress,
+      username: createProfileDto.username,
+      email: createProfileDto.email,
+      role: createProfileDto.role || UserRole.USER,
+      bio: createProfileDto.bio,
+      avatar_url: createProfileDto.avatarUrl,
+    };
+
+    return this.databaseService.createUser(newUser);
+  }
+
+  async getProfileByWalletAddress(walletAddress: string): Promise<any | null> {
+    const user = await this.databaseService.getUserByWalletAddress(walletAddress);
+    if (!user) {
+      return null;
+    }
+    // For existing users, we might want to aggregate data like in getUserProfile
+    // For now, just return the user object
+    return user;
+  }
+
+  async getProfileByEmail(email: string): Promise<any | null> {
+    const user = await this.databaseService.getUserByEmail(email);
+    if (!user) {
+      return null;
+    }
+    // For existing users, we might want to aggregate data like in getUserProfile
+    // For now, just return the user object
+    return user;
+  }
+
   /**
    * Get user profile information
    * @param userAddress - Wallet address
    * @returns User profile data
    */
   async getUserProfile(userAddress: string): Promise<UserProfile> {
+    const user = await this.databaseService.getUserByWalletAddress(userAddress);
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
+
     // Get user's created campaigns
     const createdCampaigns = await this.databaseService.getCampaignsByCreator(userAddress);
 
@@ -38,7 +97,15 @@ export class ProfileService {
     );
 
     return {
-      address: userAddress,
+      id: user.id,
+      wallet_address: user.wallet_address,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      bio: user.bio,
+      avatar_url: user.avatar_url,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
       totalCampaignsCreated: createdCampaigns.length,
       totalContributions: contributions.length,
       totalContributionAmount,
