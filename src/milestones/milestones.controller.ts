@@ -67,7 +67,10 @@ export class MilestonesController {
     status: 200,
     description: 'Vote result updated successfully',
   })
-  @ApiResponse({ status: 400, description: 'Milestone not found or invalid status' })
+  @ApiResponse({
+    status: 400,
+    description: 'Milestone not found or invalid status',
+  })
   async updateVoteResult(
     @Param('object_id') objectId: string,
     @Param('milestone_id') milestoneId: string,
@@ -106,7 +109,10 @@ export class MilestonesController {
     status: 200,
     description: 'Milestone marked as claimed successfully',
   })
-  @ApiResponse({ status: 400, description: 'Milestone not found or invalid status' })
+  @ApiResponse({
+    status: 400,
+    description: 'Milestone not found or invalid status',
+  })
   async updateIsClaimed(
     @Param('object_id') objectId: string,
     @Param('milestone_id') milestoneId: string,

@@ -16,4 +16,3 @@ const DatabaseServiceProvider = {
   exports: ['DATABASE_SERVICE', SupabaseService],
 })
 export class DatabaseModule {}
-

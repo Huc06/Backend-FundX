@@ -7,12 +7,15 @@ export class CreateEventMilestoneDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ example: 'Secure the venue for the conference.', required: false })
+  @ApiProperty({
+    example: 'Secure the venue for the conference.',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ example: 20000.00 })
+  @ApiProperty({ example: 20000.0 })
   @IsNumber()
   @IsNotEmpty()
   funding_goal: number;

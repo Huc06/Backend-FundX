@@ -8,11 +8,19 @@ import {
   IsArray,
   ValidateNested,
   IsUUID,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateEventMilestoneDto } from './create-event-milestone.dto';
 import { CreateEventGalleryImageDto } from './create-event-gallery-image.dto';
+
+export enum EventStatus {
+  PENDING = 'pending',
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+}
 
 export class CreateEventDto {
   @ApiProperty({ example: '5139ad64-31b4-4842-a43d-002dcc5e4816' })
@@ -25,7 +33,10 @@ export class CreateEventDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ example: 'A conference about the future of technology.', required: false })
+  @ApiProperty({
+    example: 'A conference about the future of technology.',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   description?: string;
@@ -57,7 +68,7 @@ export class CreateEventDto {
   @IsOptional()
   visibility?: string;
 
-  @ApiProperty({ example: 100000.00 })
+  @ApiProperty({ example: 100000.0 })
   @IsNumber()
   target_amount: number;
 
@@ -71,10 +82,19 @@ export class CreateEventDto {
   @IsOptional()
   capacity?: number;
 
-  @ApiProperty({ example: 299.00, required: false })
+  @ApiProperty({ example: 299.0, required: false })
   @IsNumber()
   @IsOptional()
   ticket_price?: number;
+
+  @ApiProperty({
+    enum: EventStatus,
+    example: EventStatus.PENDING,
+    required: false,
+  })
+  @IsEnum(EventStatus)
+  @IsOptional()
+  status?: EventStatus;
 
   @ApiProperty({ type: [CreateEventMilestoneDto] })
   @IsArray()

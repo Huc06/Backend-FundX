@@ -35,8 +35,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       typeof message === 'string'
         ? message
         : messageObj && Array.isArray(messageObj.message)
-        ? messageObj.message.join(', ')
-        : (messageObj?.message as string) || 'An error occurred';
+          ? messageObj.message.join(', ')
+          : (messageObj?.message as string) || 'An error occurred';
 
     const errorResponse = {
       is_success: false,

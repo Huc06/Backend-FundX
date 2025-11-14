@@ -1,6 +1,7 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import type { IDatabaseService } from '../database/interfaces/database.interface';
 import { CreateProfileDto, UserRole } from './dto/create-profile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 export interface UserProfile {
   id: string;
@@ -29,13 +30,20 @@ export class ProfileService {
   ) {}
 
   async createProfile(createProfileDto: CreateProfileDto): Promise<any> {
-    const existingUserByWallet = await this.databaseService.getUserByWalletAddress(createProfileDto.walletAddress);
+    const existingUserByWallet =
+      await this.databaseService.getUserByWalletAddress(
+        createProfileDto.walletAddress,
+      );
     if (existingUserByWallet) {
-      throw new BadRequestException('User with this wallet address already exists.');
+      throw new BadRequestException(
+        'User with this wallet address already exists.',
+      );
     }
 
     if (createProfileDto.email) {
-      const existingUserByEmail = await this.databaseService.getUserByEmail(createProfileDto.email);
+      const existingUserByEmail = await this.databaseService.getUserByEmail(
+        createProfileDto.email,
+      );
       if (existingUserByEmail) {
         throw new BadRequestException('User with this email already exists.');
       }
@@ -53,8 +61,31 @@ export class ProfileService {
     return this.databaseService.createUser(newUser);
   }
 
+  async updateProfile(
+    walletAddress: string,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<any> {
+    // The DTO might contain properties that are not in the 'users' table directly
+    // or need to be mapped. Let's create a clean update object.
+    const updates = {
+      username: updateProfileDto.username,
+      email: updateProfileDto.email,
+      role: updateProfileDto.role,
+      bio: updateProfileDto.bio,
+      avatar_url: updateProfileDto.avatarUrl,
+    };
+
+    // Remove undefined properties so they don't overwrite existing values with null
+    Object.keys(updates).forEach(
+      (key) => updates[key] === undefined && delete updates[key],
+    );
+
+    return this.databaseService.updateUser(walletAddress, updates);
+  }
+
   async getProfileByWalletAddress(walletAddress: string): Promise<any | null> {
-    const user = await this.databaseService.getUserByWalletAddress(walletAddress);
+    const user =
+      await this.databaseService.getUserByWalletAddress(walletAddress);
     if (!user) {
       return null;
     }
@@ -85,10 +116,12 @@ export class ProfileService {
     }
 
     // Get user's created campaigns
-    const createdCampaigns = await this.databaseService.getCampaignsByCreator(userAddress);
+    const createdCampaigns =
+      await this.databaseService.getCampaignsByCreator(userAddress);
 
     // Get user's contributions
-    const contributions = await this.databaseService.getContributionsByAddress(userAddress);
+    const contributions =
+      await this.databaseService.getContributionsByAddress(userAddress);
 
     // Calculate total contribution amount
     const totalContributionAmount = contributions.reduce(
@@ -118,7 +151,8 @@ export class ProfileService {
    * @returns Array of campaigns
    */
   async getCreatedCampaigns(userAddress: string) {
-    const campaigns = await this.databaseService.getCampaignsByCreator(userAddress);
+    const campaigns =
+      await this.databaseService.getCampaignsByCreator(userAddress);
 
     // Enrich each campaign with additional data
     const enrichedCampaigns = await Promise.all(
@@ -126,10 +160,12 @@ export class ProfileService {
         const campaignId = campaign.blob_id;
 
         // Get images
-        const images = await this.databaseService.getImagesByCampaignId(campaignId);
+        const images =
+          await this.databaseService.getImagesByCampaignId(campaignId);
 
         // Get contributions
-        const contributions = await this.databaseService.getContributionsByCampaignId(campaignId);
+        const contributions =
+          await this.databaseService.getContributionsByCampaignId(campaignId);
 
         // Get milestones
         const milestones = await this.databaseService.getMilestonesByObjectId(
@@ -154,7 +190,8 @@ export class ProfileService {
    * @returns Array of contributions with campaign data
    */
   async getContributions(userAddress: string) {
-    const contributions = await this.databaseService.getContributionsByAddress(userAddress);
+    const contributions =
+      await this.databaseService.getContributionsByAddress(userAddress);
 
     // Enrich each contribution with campaign data
     const enrichedContributions = await Promise.all(
@@ -173,4 +210,3 @@ export class ProfileService {
     return enrichedContributions;
   }
 }
-

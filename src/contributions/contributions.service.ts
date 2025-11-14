@@ -23,7 +23,8 @@ export class ContributionsService {
       created_at: new Date().toISOString(),
     };
 
-    const savedContribution = await this.databaseService.createContribution(contribution);
+    const savedContribution =
+      await this.databaseService.createContribution(contribution);
 
     // Update campaign current_amount
     const campaign = await this.databaseService.getCampaignByBlobId(
@@ -36,11 +37,13 @@ export class ContributionsService {
         data: savedContribution,
       };
     }
-    const newAmount = (campaign.current_amount || 0) + createContributionDto.amount;
-    const updatedCampaign = await this.databaseService.updateCampaignCurrentAmount(
-      createContributionDto.campaignId,
-      newAmount,
-    );
+    const newAmount =
+      (campaign.current_amount || 0) + createContributionDto.amount;
+    const updatedCampaign =
+      await this.databaseService.updateCampaignCurrentAmount(
+        createContributionDto.campaignId,
+        newAmount,
+      );
 
     return {
       is_success: true,
@@ -53,7 +56,8 @@ export class ContributionsService {
    * Get contributions by wallet address
    */
   async getContributionsByAddress(address: string) {
-    const contributions = await this.databaseService.getContributionsByAddress(address);
+    const contributions =
+      await this.databaseService.getContributionsByAddress(address);
 
     // Group by campaign and calculate totals
     const campaignContributions = new Map<string, number>();
@@ -73,7 +77,8 @@ export class ContributionsService {
 
       // Get campaign details (simplified - in real implementation, join with campaigns)
       if (!campaignDetails.has(campaignId)) {
-        const campaign = await this.databaseService.getCampaignByBlobId(campaignId);
+        const campaign =
+          await this.databaseService.getCampaignByBlobId(campaignId);
         if (campaign) {
           campaignDetails.set(campaignId, {
             blob_id: campaign.blob_id,
@@ -93,11 +98,15 @@ export class ContributionsService {
     }
 
     const results: any[] = [];
-    for (const [campaignId, totalContributed] of campaignContributions.entries()) {
+    for (const [
+      campaignId,
+      totalContributed,
+    ] of campaignContributions.entries()) {
       const campaignInfo = campaignDetails.get(campaignId);
 
       // Get first image
-      const images = await this.databaseService.getImagesByCampaignId(campaignId);
+      const images =
+        await this.databaseService.getImagesByCampaignId(campaignId);
 
       results.push({
         campaign_id: campaignId,
@@ -107,10 +116,9 @@ export class ContributionsService {
       });
     }
 
-    const totalContributedAllCampaigns = Array.from(campaignContributions.values()).reduce(
-      (sum, amount) => sum + amount,
-      0,
-    );
+    const totalContributedAllCampaigns = Array.from(
+      campaignContributions.values(),
+    ).reduce((sum, amount) => sum + amount, 0);
 
     return {
       is_success: true,
@@ -123,7 +131,8 @@ export class ContributionsService {
    * Get all wallet addresses that contributed to a campaign
    */
   async getAddressesByCampaign(campaignId: string) {
-    const contributions = await this.databaseService.getContributionsByCampaignId(campaignId);
+    const contributions =
+      await this.databaseService.getContributionsByCampaignId(campaignId);
 
     const addresses = new Set<string>();
     for (const contribution of contributions) {

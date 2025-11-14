@@ -25,7 +25,9 @@ export class ContributionsController {
 
   @Post('create-contribution')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Create a new contribution and update campaign amount' })
+  @ApiOperation({
+    summary: 'Create a new contribution and update campaign amount',
+  })
   @ApiBody({ type: CreateContributionDto })
   @ApiResponse({
     status: 200,
@@ -70,7 +72,10 @@ export class ContributionsController {
     status: 200,
     description: 'Contributions retrieved successfully',
   })
-  @ApiResponse({ status: 400, description: 'Missing address or campaign_id parameter' })
+  @ApiResponse({
+    status: 400,
+    description: 'Missing address or campaign_id parameter',
+  })
   async getContributions(
     @Query('address') address?: string,
     @Query('campaign_id') campaignId?: string,

@@ -8,7 +8,7 @@ export enum UserRole {
 
 export class CreateProfileDto {
   @ApiProperty({
-    description: 'The user\'s public blockchain wallet address',
+    description: "The user's public blockchain wallet address",
     example: '0x1234567890abcdef1234567890abcdef12345678',
   })
   @IsString()
@@ -24,7 +24,7 @@ export class CreateProfileDto {
   username?: string;
 
   @ApiProperty({
-    description: 'The user\'s email address',
+    description: "The user's email address",
     example: 'john.doe@example.com',
     required: false,
   })
@@ -53,7 +53,7 @@ export class CreateProfileDto {
   bio?: string;
 
   @ApiProperty({
-    description: 'URL to the user\'s profile picture',
+    description: "URL to the user's profile picture",
     example: 'https://example.com/avatar.jpg',
     required: false,
   })

@@ -1,4 +1,9 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import type { IDatabaseService } from '../database/interfaces/database.interface';
 
@@ -47,12 +52,10 @@ export class EventsService {
       throw new NotFoundException(`Event with id ${eventId} not found`);
     }
 
-    const milestones = await this.databaseService.getEventMilestonesByEventId(
-      eventId,
-    );
-    const services = await this.databaseService.getEventServicesByEventId(
-      eventId,
-    );
+    const milestones =
+      await this.databaseService.getEventMilestonesByEventId(eventId);
+    const services =
+      await this.databaseService.getEventServicesByEventId(eventId);
     const galleryImages =
       await this.databaseService.getEventGalleryImagesByEventId(eventId);
 

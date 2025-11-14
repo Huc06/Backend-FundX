@@ -39,7 +39,8 @@ export class MilestonesService {
       currency: createMilestoneDto.currency,
     };
 
-    const savedMilestone = await this.databaseService.createMilestone(milestone);
+    const savedMilestone =
+      await this.databaseService.createMilestone(milestone);
 
     return {
       is_success: true,
@@ -56,7 +57,10 @@ export class MilestonesService {
     milestoneId: string,
     updateVoteResultDto: UpdateVoteResultDto,
   ) {
-    const milestone = await this.databaseService.getMilestone(objectId, milestoneId);
+    const milestone = await this.databaseService.getMilestone(
+      objectId,
+      milestoneId,
+    );
 
     if (!milestone) {
       throw new BadRequestException('Milestone not found');
@@ -65,7 +69,8 @@ export class MilestonesService {
     if (milestone.status !== 'in-voting') {
       return {
         is_success: false,
-        message: "Milestone status is not 'in-voting'. Cannot update vote result.",
+        message:
+          "Milestone status is not 'in-voting'. Cannot update vote result.",
       };
     }
 
@@ -89,7 +94,10 @@ export class MilestonesService {
    * TODO: Implement database logic with Walrus
    */
   async updateIsClaimed(objectId: string, milestoneId: string) {
-    const milestone = await this.databaseService.getMilestone(objectId, milestoneId);
+    const milestone = await this.databaseService.getMilestone(
+      objectId,
+      milestoneId,
+    );
 
     if (!milestone) {
       throw new BadRequestException('Milestone not found');
@@ -98,11 +106,16 @@ export class MilestonesService {
     if (milestone.status !== 'approved') {
       return {
         is_success: false,
-        message: "Milestone status is not 'approved'. Cannot update is_claimed.",
+        message:
+          "Milestone status is not 'approved'. Cannot update is_claimed.",
       };
     }
 
-    await this.databaseService.updateMilestoneIsClaimed(objectId, milestoneId, true);
+    await this.databaseService.updateMilestoneIsClaimed(
+      objectId,
+      milestoneId,
+      true,
+    );
 
     return {
       is_success: true,
@@ -115,7 +128,8 @@ export class MilestonesService {
    * TODO: Implement database logic with Walrus
    */
   async getMilestonesByCampaign(objectId: string) {
-    const milestones = await this.databaseService.getMilestonesByObjectId(objectId);
+    const milestones =
+      await this.databaseService.getMilestonesByObjectId(objectId);
 
     return {
       is_success: true,

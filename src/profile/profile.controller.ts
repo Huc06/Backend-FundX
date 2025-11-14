@@ -17,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @ApiTags('Profile')
 @Controller('profile')
@@ -26,15 +27,57 @@ export class ProfileController {
   @Post()
   @ApiOperation({
     summary: 'Create a new user profile',
-    description: 'Registers a new user profile with a wallet address, and optionally username, email, bio, and avatar URL.',
+    description:
+      'Registers a new user profile with a wallet address, and optionally username, email, bio, and avatar URL.',
   })
-  @ApiResponse({ status: 201, description: 'User profile created successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad Request. User with wallet address or email already exists.' })
+  @ApiResponse({
+    status: 201,
+    description: 'User profile created successfully.',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad Request. User with wallet address or email already exists.',
+  })
   async createProfile(@Body() createProfileDto: CreateProfileDto) {
-    const newProfile = await this.profileService.createProfile(createProfileDto);
+    const newProfile =
+      await this.profileService.createProfile(createProfileDto);
     return {
       is_success: true,
       data: newProfile,
+    };
+  }
+
+  @Post(':walletAddress/update')
+  @ApiOperation({
+    summary: 'Update user profile',
+    description: 'Updates a user profile using their unique wallet address.',
+  })
+  @ApiParam({
+    name: 'walletAddress',
+    required: true,
+    description: "The user's public blockchain wallet address",
+    example: '0x1234567890abcdef1234567890abcdef12345678',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile updated successfully.',
+  })
+  @ApiResponse({ status: 404, description: 'User profile not found.' })
+  async updateProfile(
+    @Param('walletAddress') walletAddress: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    const updatedProfile = await this.profileService.updateProfile(
+      walletAddress,
+      updateProfileDto,
+    );
+    if (!updatedProfile) {
+      throw new NotFoundException('User profile not found.');
+    }
+    return {
+      is_success: true,
+      data: updatedProfile,
     };
   }
 
@@ -46,13 +89,19 @@ export class ProfileController {
   @ApiParam({
     name: 'walletAddress',
     required: true,
-    description: 'The user\'s public blockchain wallet address',
+    description: "The user's public blockchain wallet address",
     example: '0x1234567890abcdef1234567890abcdef12345678',
   })
-  @ApiResponse({ status: 200, description: 'User profile retrieved successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully.',
+  })
   @ApiResponse({ status: 404, description: 'User profile not found.' })
-  async getProfileByWalletAddress(@Param('walletAddress') walletAddress: string) {
-    const profile = await this.profileService.getProfileByWalletAddress(walletAddress);
+  async getProfileByWalletAddress(
+    @Param('walletAddress') walletAddress: string,
+  ) {
+    const profile =
+      await this.profileService.getProfileByWalletAddress(walletAddress);
     if (!profile) {
       throw new NotFoundException('User profile not found.');
     }
@@ -70,10 +119,13 @@ export class ProfileController {
   @ApiParam({
     name: 'email',
     required: true,
-    description: 'The user\'s email address',
+    description: "The user's email address",
     example: 'john.doe@example.com',
   })
-  @ApiResponse({ status: 200, description: 'User profile retrieved successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'User profile retrieved successfully.',
+  })
   @ApiResponse({ status: 404, description: 'User profile not found.' })
   async getProfileByEmail(@Param('email') email: string) {
     const profile = await this.profileService.getProfileByEmail(email);
@@ -89,7 +141,8 @@ export class ProfileController {
   @Get('me')
   @ApiOperation({
     summary: 'Get logged-in user profile',
-    description: 'Returns profile information for the authenticated user including campaign and contribution statistics',
+    description:
+      'Returns profile information for the authenticated user including campaign and contribution statistics',
   })
   @ApiQuery({
     name: 'address',
@@ -124,7 +177,8 @@ export class ProfileController {
   @Get('me/created-campaigns')
   @ApiOperation({
     summary: 'Get campaigns created by user',
-    description: 'Returns a list of all campaigns created by the authenticated user with full details',
+    description:
+      'Returns a list of all campaigns created by the authenticated user with full details',
   })
   @ApiQuery({
     name: 'address',
@@ -168,7 +222,8 @@ export class ProfileController {
   @Get('me/contributions')
   @ApiOperation({
     summary: 'Get contributions made by user',
-    description: 'Returns a list of all contributions made by the authenticated user, including campaign details for each contribution',
+    description:
+      'Returns a list of all contributions made by the authenticated user, including campaign details for each contribution',
   })
   @ApiQuery({
     name: 'address',
@@ -213,4 +268,3 @@ export class ProfileController {
     };
   }
 }
-

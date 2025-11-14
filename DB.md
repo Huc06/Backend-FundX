@@ -26,6 +26,7 @@ To make the database more robust, performant, and maintainable, the following Po
 2.  **Custom ENUM Types**: For columns with a fixed set of possible values (like `status` or `reward_type`), custom `ENUM` types are created. This provides better data integrity than `VARCHAR` and is more efficient.
     ```sql
     CREATE TYPE campaign_status AS ENUM ('pending', 'active', 'successful', 'failed');
+    CREATE TYPE event_status AS ENUM ('pending', 'active', 'completed', 'cancelled');
     CREATE TYPE reward_type AS ENUM ('none', 'token', 'nft');
     CREATE TYPE roadmap_phase_state AS ENUM ('done', 'in-progress', 'future');
     CREATE TYPE user_role AS ENUM ('admin', 'user');
@@ -152,6 +153,7 @@ To make the database more robust, performant, and maintainable, the following Po
 | `reward_type` | `reward_type` | `NOT NULL DEFAULT 'none'` | Type of reward for backers. |
 | `capacity` | `INTEGER` | | Maximum number of attendees. |
 | `ticket_price` | `DECIMAL(10, 2)`| `DEFAULT 0.00` | The price of a ticket if it's a paid event. |
+| `status` | `event_status` | `NOT NULL DEFAULT 'pending'` | The current status of the event. |
 | `created_at` | `TIMESTAMPTZ` | `NOT NULL DEFAULT NOW()` | Timestamp of event creation. |
 | `updated_at` | `TIMESTAMPTZ` | `NOT NULL DEFAULT NOW()` | Timestamp of last event update. |
 

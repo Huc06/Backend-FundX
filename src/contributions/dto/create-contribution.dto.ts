@@ -28,7 +28,8 @@ export class CreateContributionDto {
 
   @ApiProperty({
     description: 'Transaction hash from blockchain',
-    example: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+    example:
+      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
   })
   @IsString()
   @IsNotEmpty()

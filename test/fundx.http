@@ -114,6 +114,25 @@ Content-Type: application/json
   ]
 }
 
+### Get all events
+GET http://localhost:3000/events
+
+### Get event by ID
+GET http://localhost:3000/events/a2f7a7d3-6d7c-4c4d-8f1a-3b3a2a1b3a5c
+
+### Update an event
+# @name updateEvent
+# Note: This endpoint requires authentication. The user's role will be checked by the server.
+# Only users with the 'admin' role can update the 'status' field.
+POST http://localhost:3000/events/a2f7a7d3-6d7c-4c4d-8f1a-3b3a2a1b3a5c/update
+Content-Type: application/json
+
+{
+  "name": "My Updated Tech Conference 2025",
+  "location": "New York, NY",
+  "status": "active"
+}
+
 ### Create a new user profile
 POST http://localhost:3000/profile
 Content-Type: application/json
@@ -132,3 +151,43 @@ GET http://localhost:3000/profile/wallet/0x1234567890abcdef1234567890abcdef12345
 
 ### Get user profile by email
 GET http://localhost:3000/profile/email/test@example.com
+
+### Update user profile
+POST http://localhost:3000/profile/0x1234567890abcdef1234567890abcdef12345678/update
+Content-Type: application/json
+
+{
+  "username": "test_user_updated",
+  "bio": "An updated bio for the test user."
+}
+
+### Create a new service
+POST http://localhost:3000/services
+Content-Type: application/json
+
+{
+  "id": "service-1",
+  "name": "Premium Support Package",
+  "description": "24/7 dedicated support for critical issues.",
+  "base_cost": 199.99,
+  "category": "support",
+  "popular": true
+}
+
+### Get all services
+GET http://localhost:3000/services
+
+### Get service by ID
+GET http://localhost:3000/services/service-1
+
+### Update service by ID
+POST http://localhost:3000/services/service-1/update
+Content-Type: application/json
+
+{
+  "description": "Enhanced 24/7 dedicated support with priority response.",
+  "base_cost": 249.99
+}
+
+### Delete service by ID
+POST http://localhost:3000/services/service-1/delete
