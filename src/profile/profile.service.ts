@@ -58,7 +58,11 @@ export class ProfileService {
       avatar_url: createProfileDto.avatarUrl,
     };
 
-    return this.databaseService.createUser(newUser);
+    const data = await this.databaseService.createUser(newUser);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async updateProfile(
@@ -80,7 +84,11 @@ export class ProfileService {
       (key) => updates[key] === undefined && delete updates[key],
     );
 
-    return this.databaseService.updateUser(walletAddress, updates);
+    const data = await this.databaseService.updateUser(walletAddress, updates);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getProfileByWalletAddress(walletAddress: string): Promise<any | null> {
@@ -91,7 +99,10 @@ export class ProfileService {
     }
     // For existing users, we might want to aggregate data like in getUserProfile
     // For now, just return the user object
-    return user;
+    return {
+      is_success: true,
+      data: user,
+    };
   }
 
   async getProfileByEmail(email: string): Promise<any | null> {
@@ -101,7 +112,10 @@ export class ProfileService {
     }
     // For existing users, we might want to aggregate data like in getUserProfile
     // For now, just return the user object
-    return user;
+    return {
+      is_success: true,
+      data: user,
+    };
   }
 
   /**
@@ -109,7 +123,7 @@ export class ProfileService {
    * @param userAddress - Wallet address
    * @returns User profile data
    */
-  async getUserProfile(userAddress: string): Promise<UserProfile> {
+  async getUserProfile(userAddress: string): Promise<any> {
     const user = await this.databaseService.getUserByWalletAddress(userAddress);
     if (!user) {
       throw new BadRequestException('User not found.');
@@ -129,7 +143,7 @@ export class ProfileService {
       0,
     );
 
-    return {
+    const data = {
       id: user.id,
       wallet_address: user.wallet_address,
       username: user.username,
@@ -142,6 +156,11 @@ export class ProfileService {
       totalCampaignsCreated: createdCampaigns.length,
       totalContributions: contributions.length,
       totalContributionAmount,
+    };
+
+    return {
+      is_success: true,
+      data: data,
     };
   }
 
@@ -181,7 +200,10 @@ export class ProfileService {
       }),
     );
 
-    return enrichedCampaigns;
+    return {
+      is_success: true,
+      data: enrichedCampaigns,
+    };
   }
 
   /**
@@ -207,6 +229,9 @@ export class ProfileService {
       }),
     );
 
-    return enrichedContributions;
+    return {
+      is_success: true,
+      data: enrichedContributions,
+    };
   }
 }

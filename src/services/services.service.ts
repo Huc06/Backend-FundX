@@ -18,7 +18,10 @@ export class ServicesService {
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async findAll() {
@@ -30,7 +33,10 @@ export class ServicesService {
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async findOne(id: string) {
@@ -44,7 +50,10 @@ export class ServicesService {
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async update(id: string, updateServiceDto: UpdateServiceDto) {
@@ -59,7 +68,10 @@ export class ServicesService {
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async remove(id: string) {
@@ -74,6 +86,9 @@ export class ServicesService {
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 }

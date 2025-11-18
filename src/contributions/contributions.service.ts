@@ -37,32 +37,60 @@ export class ContributionsService {
       tier,
     };
 
-    return this.databaseService.createContributionAndupdateAmount(contribution);
+    const data = await this.databaseService.createContributionAndupdateAmount(contribution);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getAllContributions() {
-    return this.databaseService.getAllContributions();
+    const data = await this.databaseService.getAllContributions();
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getContributionsByWalletAddress(address: string) {
-    return this.databaseService.getContributionsByAddress(address);
+    const data = await this.databaseService.getContributionsByAddress(address);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getContributionsByCampaignId(campaignId: string) {
-    return this.databaseService.getContributionsByCampaignId(campaignId);
+    const data = await this.databaseService.getContributionsByCampaignId(campaignId);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getContributionsByEventId(eventId: string) {
-    return this.databaseService.getContributionsByEventId(eventId);
+    const data = await this.databaseService.getContributionsByEventId(eventId);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getContributionsOfAllCampaigns() {
     const allContributions = await this.databaseService.getAllContributions();
-    return allContributions.filter((c) => c.campaign_id);
+    const data = allContributions.filter((c) => c.campaign_id);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 
   async getContributionsOfAllEvents() {
     const allContributions = await this.databaseService.getAllContributions();
-    return allContributions.filter((c) => c.event_id);
+    const data = allContributions.filter((c) => c.event_id);
+    return {
+      is_success: true,
+      data: data,
+    };
   }
 }

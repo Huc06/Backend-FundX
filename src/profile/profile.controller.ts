@@ -33,6 +33,22 @@ export class ProfileController {
   @ApiResponse({
     status: 201,
     description: 'User profile created successfully.',
+    schema: {
+      example: {
+        is_success: true,
+        data: {
+          id: '00000000-0000-0000-0000-000000000000',
+          wallet_address: '0x1234567890abcdef1234567890abcdef12345678',
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          role: 'user',
+          bio: 'Passionate about blockchain and decentralized applications.',
+          avatar_url: 'https://example.com/avatar.jpg',
+          created_at: '2023-10-27T10:00:00Z',
+          updated_at: '2023-10-27T10:00:00Z',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -40,12 +56,7 @@ export class ProfileController {
       'Bad Request. User with wallet address or email already exists.',
   })
   async createProfile(@Body() createProfileDto: CreateProfileDto) {
-    const newProfile =
-      await this.profileService.createProfile(createProfileDto);
-    return {
-      is_success: true,
-      data: newProfile,
-    };
+    return this.profileService.createProfile(createProfileDto);
   }
 
   @Post(':walletAddress/update')
@@ -62,6 +73,22 @@ export class ProfileController {
   @ApiResponse({
     status: 200,
     description: 'User profile updated successfully.',
+    schema: {
+      example: {
+        is_success: true,
+        data: {
+          id: '00000000-0000-0000-0000-000000000000',
+          wallet_address: '0x1234567890abcdef1234567890abcdef12345678',
+          username: 'john_doe_updated',
+          email: 'john.doe.updated@example.com',
+          role: 'user',
+          bio: 'Updated bio.',
+          avatar_url: 'https://example.com/avatar_updated.jpg',
+          created_at: '2023-10-27T10:00:00Z',
+          updated_at: '2023-10-27T11:00:00Z',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'User profile not found.' })
   async updateProfile(
@@ -75,10 +102,7 @@ export class ProfileController {
     if (!updatedProfile) {
       throw new NotFoundException('User profile not found.');
     }
-    return {
-      is_success: true,
-      data: updatedProfile,
-    };
+    return updatedProfile;
   }
 
   @Get('wallet/:walletAddress')
@@ -95,6 +119,22 @@ export class ProfileController {
   @ApiResponse({
     status: 200,
     description: 'User profile retrieved successfully.',
+    schema: {
+      example: {
+        is_success: true,
+        data: {
+          id: '00000000-0000-0000-0000-000000000000',
+          wallet_address: '0x1234567890abcdef1234567890abcdef12345678',
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          role: 'user',
+          bio: 'Passionate about blockchain and decentralized applications.',
+          avatar_url: 'https://example.com/avatar.jpg',
+          created_at: '2023-10-27T10:00:00Z',
+          updated_at: '2023-10-27T10:00:00Z',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'User profile not found.' })
   async getProfileByWalletAddress(
@@ -105,10 +145,7 @@ export class ProfileController {
     if (!profile) {
       throw new NotFoundException('User profile not found.');
     }
-    return {
-      is_success: true,
-      data: profile,
-    };
+    return profile;
   }
 
   @Get('email/:email')
@@ -125,6 +162,22 @@ export class ProfileController {
   @ApiResponse({
     status: 200,
     description: 'User profile retrieved successfully.',
+    schema: {
+      example: {
+        is_success: true,
+        data: {
+          id: '00000000-0000-0000-0000-000000000000',
+          wallet_address: '0x1234567890abcdef1234567890abcdef12345678',
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          role: 'user',
+          bio: 'Passionate about blockchain and decentralized applications.',
+          avatar_url: 'https://example.com/avatar.jpg',
+          created_at: '2023-10-27T10:00:00Z',
+          updated_at: '2023-10-27T10:00:00Z',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 404, description: 'User profile not found.' })
   async getProfileByEmail(@Param('email') email: string) {
@@ -132,10 +185,7 @@ export class ProfileController {
     if (!profile) {
       throw new NotFoundException('User profile not found.');
     }
-    return {
-      is_success: true,
-      data: profile,
-    };
+    return profile;
   }
 
   @Get('me')
@@ -155,10 +205,21 @@ export class ProfileController {
     description: 'User profile retrieved successfully',
     schema: {
       example: {
-        address: '0x1234567890abcdef1234567890abcdef12345678',
-        totalCampaignsCreated: 5,
-        totalContributions: 12,
-        totalContributionAmount: 1500,
+        is_success: true,
+        data: {
+          id: '00000000-0000-0000-0000-000000000000',
+          wallet_address: '0x1234567890abcdef1234567890abcdef12345678',
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          role: 'user',
+          bio: 'Passionate about blockchain and decentralized applications.',
+          avatar_url: 'https://example.com/avatar.jpg',
+          created_at: '2023-10-27T10:00:00Z',
+          updated_at: '2023-10-27T10:00:00Z',
+          totalCampaignsCreated: 5,
+          totalContributions: 12,
+          totalContributionAmount: 1500,
+        },
       },
     },
   })
@@ -168,10 +229,7 @@ export class ProfileController {
       throw new BadRequestException('address query parameter is required');
     }
 
-    return {
-      is_success: true,
-      data: await this.profileService.getUserProfile(address),
-    };
+    return this.profileService.getUserProfile(address);
   }
 
   @Get('me/created-campaigns')
@@ -194,11 +252,20 @@ export class ProfileController {
         is_success: true,
         data: [
           {
-            blob_id: 'campaign-123',
-            campaign_name: 'Build a DeFi Platform',
-            goal: 10000,
-            current_amount: 7500,
-            end_at: '2025-12-31T23:59:59.000Z',
+            campaign_id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            creator_id: '00000000-0000-0000-0000-000000000000',
+            on_chain_object_id: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b',
+            title: 'Innovate for a Better Tomorrow',
+            short_description: 'Supporting groundbreaking projects in sustainable technology.',
+            category: 'technology',
+            goal_amount: 50000,
+            current_amount: 15000,
+            currency: 'USD',
+            duration_days: 60,
+            reward_type: 'token',
+            status: 'active',
+            created_at: '2023-10-26T10:00:00Z',
+            updated_at: '2023-10-26T10:00:00Z',
             images: [],
             contributions: [],
             milestones: [],
@@ -213,10 +280,7 @@ export class ProfileController {
       throw new BadRequestException('address query parameter is required');
     }
 
-    return {
-      is_success: true,
-      data: await this.profileService.getCreatedCampaigns(address),
-    };
+    return this.profileService.getCreatedCampaigns(address);
   }
 
   @Get('me/contributions')
@@ -239,16 +303,19 @@ export class ProfileController {
         is_success: true,
         data: [
           {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
             campaign_id: 'campaign-123',
-            wallet_address: '0x1234567890abcdef1234567890abcdef12345678',
+            event_id: null,
             amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
             currency: 'SUI',
-            tx_hash: '0xabcdef1234567890',
-            created_at: '2025-11-10T00:00:00.000Z',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
             campaign: {
-              blob_id: 'campaign-123',
-              campaign_name: 'Build a DeFi Platform',
-              goal: 10000,
+              id: 'campaign-123',
+              title: 'Build a DeFi Platform',
+              goal_amount: 10000,
               current_amount: 7500,
             },
           },
@@ -262,9 +329,6 @@ export class ProfileController {
       throw new BadRequestException('address query parameter is required');
     }
 
-    return {
-      is_success: true,
-      data: await this.profileService.getContributions(address),
-    };
+    return this.profileService.getContributions(address);
   }
 }

@@ -7,12 +7,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ContributionsService } from './contributions.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
 
@@ -29,13 +24,32 @@ export class ContributionsController {
   @ApiResponse({
     status: 201,
     description: 'Contribution created successfully',
+    schema: {
+      example: {
+        is_success: true,
+        data: {
+          id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+          user_id: '00000000-0000-0000-0000-000000000000',
+          campaign_id: 'campaign-123',
+          event_id: null,
+          amount: 100,
+          transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+          currency: 'SUI',
+          tier: 'gold',
+          created_at: '2023-10-27T10:00:00Z',
+        },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 404, description: 'Campaign or Event not found' })
-  async createContribution(@Body() createContributionDto: CreateContributionDto) {
+  async createContribution(
+    @Body() createContributionDto: CreateContributionDto,
+  ) {
     try {
-      const data = await this.contributionsService.createContribution(createContributionDto);
-      return { is_success: true, data };
+      return await this.contributionsService.createContribution(
+        createContributionDto,
+      );
     } catch (error) {
       return { is_success: false, error: error.message };
     }
@@ -46,11 +60,28 @@ export class ContributionsController {
   @ApiResponse({
     status: 200,
     description: 'A list of all contributions',
+    schema: {
+      example: {
+        is_success: true,
+        data: [
+          {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            campaign_id: 'campaign-123',
+            event_id: null,
+            amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            currency: 'SUI',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
+          },
+        ],
+      },
+    },
   })
   async getAllContributions() {
     try {
-      const data = await this.contributionsService.getAllContributions();
-      return { is_success: true, data };
+      return await this.contributionsService.getAllContributions();
     } catch (error) {
       return { is_success: false, error: error.message };
     }
@@ -58,15 +89,37 @@ export class ContributionsController {
 
   @Get('wallet/:address')
   @ApiOperation({ summary: 'Get all contributions for a given wallet address' })
-  @ApiParam({ name: 'address', description: 'The wallet address of the contributor' })
+  @ApiParam({
+    name: 'address',
+    description: 'The wallet address of the contributor',
+  })
   @ApiResponse({
     status: 200,
     description: 'A list of contributions for the given wallet address',
+    schema: {
+      example: {
+        is_success: true,
+        data: [
+          {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            campaign_id: 'campaign-123',
+            event_id: null,
+            amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            currency: 'SUI',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
+          },
+        ],
+      },
+    },
   })
   async getContributionsByWalletAddress(@Param('address') address: string) {
     try {
-      const data = await this.contributionsService.getContributionsByWalletAddress(address);
-      return { is_success: true, data };
+      return await this.contributionsService.getContributionsByWalletAddress(
+        address,
+      );
     } catch (error) {
       return { is_success: false, error: error.message };
     }
@@ -78,11 +131,28 @@ export class ContributionsController {
   @ApiResponse({
     status: 200,
     description: 'A list of contributions for the given campaign',
+    schema: {
+      example: {
+        is_success: true,
+        data: [
+          {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            campaign_id: 'campaign-123',
+            event_id: null,
+            amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            currency: 'SUI',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
+          },
+        ],
+      },
+    },
   })
   async getContributionsByCampaignId(@Param('id') id: string) {
     try {
-      const data = await this.contributionsService.getContributionsByCampaignId(id);
-      return { is_success: true, data };
+      return await this.contributionsService.getContributionsByCampaignId(id);
     } catch (error) {
       return { is_success: false, error: error.message };
     }
@@ -94,11 +164,28 @@ export class ContributionsController {
   @ApiResponse({
     status: 200,
     description: 'A list of contributions for the given event',
+    schema: {
+      example: {
+        is_success: true,
+        data: [
+          {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            campaign_id: null,
+            event_id: 'event-123',
+            amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            currency: 'SUI',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
+          },
+        ],
+      },
+    },
   })
   async getContributionsByEventId(@Param('id') id: string) {
     try {
-      const data = await this.contributionsService.getContributionsByEventId(id);
-      return { is_success: true, data };
+      return await this.contributionsService.getContributionsByEventId(id);
     } catch (error) {
       return { is_success: false, error: error.message };
     }
@@ -109,11 +196,28 @@ export class ContributionsController {
   @ApiResponse({
     status: 200,
     description: 'A list of all contributions made to campaigns',
+    schema: {
+      example: {
+        is_success: true,
+        data: [
+          {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            campaign_id: 'campaign-123',
+            event_id: null,
+            amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            currency: 'SUI',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
+          },
+        ],
+      },
+    },
   })
   async getContributionsOfAllCampaigns() {
     try {
-      const data = await this.contributionsService.getContributionsOfAllCampaigns();
-      return { is_success: true, data };
+      return await this.contributionsService.getContributionsOfAllCampaigns();
     } catch (error) {
       return { is_success: false, error: error.message };
     }
@@ -124,11 +228,28 @@ export class ContributionsController {
   @ApiResponse({
     status: 200,
     description: 'A list of all contributions made to events',
+    schema: {
+      example: {
+        is_success: true,
+        data: [
+          {
+            id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            campaign_id: null,
+            event_id: 'event-123',
+            amount: 100,
+            transaction_hash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            currency: 'SUI',
+            tier: 'gold',
+            created_at: '2023-10-27T10:00:00Z',
+          },
+        ],
+      },
+    },
   })
   async getContributionsOfAllEvents() {
     try {
-      const data = await this.contributionsService.getContributionsOfAllEvents();
-      return { is_success: true, data };
+      return await this.contributionsService.getContributionsOfAllEvents();
     } catch (error) {
       return { is_success: false, error: error.message };
     }
