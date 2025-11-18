@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION create_event_with_details(
-    p_creator_id UUID,
+    p_creator_address VARCHAR,
     p_name VARCHAR,
     p_description TEXT,
     p_start_time TIMESTAMPTZ,
@@ -25,11 +25,11 @@ DECLARE
 BEGIN
     -- Insert into events table
     INSERT INTO events (
-        creator_id, name, description, start_time, end_time, funding_deadline,
+        creator_address, name, description, start_time, end_time, funding_deadline,
         timezone, location, visibility, target_amount, reward_type, capacity,
         ticket_price, status
     ) VALUES (
-        p_creator_id, p_name, p_description, p_start_time, p_end_time, p_funding_deadline,
+        p_creator_address, p_name, p_description, p_start_time, p_end_time, p_funding_deadline,
         p_timezone, p_location, p_visibility, p_target_amount, p_reward_type, p_capacity,
         p_ticket_price, 'pending'
     ) RETURNING id INTO v_event_id;

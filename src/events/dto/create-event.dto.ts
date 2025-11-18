@@ -23,10 +23,13 @@ export enum EventStatus {
 }
 
 export class CreateEventDto {
-  @ApiProperty({ example: '5139ad64-31b4-4842-a43d-002dcc5e4816' })
-  @IsUUID()
+  @ApiProperty({
+    description: 'Creator wallet address',
+    example: '0x0000000000000000000000000000000000000000',
+  })
+  @IsString()
   @IsNotEmpty()
-  creator_id: string;
+  creator_address: string;
 
   @ApiProperty({ example: 'My Tech Conference 2025' })
   @IsString()

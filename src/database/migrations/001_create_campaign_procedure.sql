@@ -1,6 +1,6 @@
 
 CREATE OR REPLACE FUNCTION create_campaign_with_details(
-    p_creator_id UUID,
+    p_creator_address VARCHAR,
     p_on_chain_object_id VARCHAR,
     p_title VARCHAR,
     p_short_description VARCHAR,
@@ -28,10 +28,10 @@ BEGIN
 
     -- Insert into campaigns table
     INSERT INTO campaigns (
-        creator_id, on_chain_object_id, title, short_description, category,
+        creator_address, on_chain_object_id, title, short_description, category,
         goal_amount, currency, duration_days, end_date, reward_type, status
     ) VALUES (
-        p_creator_id, p_on_chain_object_id, p_title, p_short_description, p_category,
+        p_creator_address, p_on_chain_object_id, p_title, p_short_description, p_category,
         p_goal_amount, p_currency, p_duration_days, v_end_date, p_reward_type, 'pending'
     ) RETURNING id INTO v_campaign_id;
 

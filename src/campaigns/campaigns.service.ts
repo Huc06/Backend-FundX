@@ -14,7 +14,7 @@ export class CampaignsService {
    */
   async create(createCampaignDto: CreateCampaignDto) {
     const campaignData = {
-      creator_id: createCampaignDto.creator_id,
+      creator_address: createCampaignDto.creator_address,
       on_chain_object_id: createCampaignDto.on_chain_object_id,
       title: createCampaignDto.title,
       short_description: createCampaignDto.short_description,

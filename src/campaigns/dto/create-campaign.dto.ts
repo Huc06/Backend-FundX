@@ -17,12 +17,12 @@ import { CreateGalleryImageDto } from './create-gallery-image.dto';
 
 export class CreateCampaignDto {
   @ApiProperty({
-    description: 'Creator user ID',
-    example: '00000000-0000-0000-0000-000000000000',
+    description: 'Creator wallet address',
+    example: '0x0000000000000000000000000000000000000000',
   })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
-  creator_id: string;
+  creator_address: string;
 
   @ApiPropertyOptional({
     description: 'The object ID on the Sui blockchain.',

@@ -3,7 +3,7 @@ POST http://localhost:3000/campaigns
 Content-Type: application/json
 
 {
-  "creator_id": "5139ad64-31b4-4842-a43d-002dcc5e4816",
+  "creator_address": "0x1234567890abcdef1234567890abcdef12345678",
   "on_chain_object_id": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
   "title": "My Awesome Blockchain Game",
   "short_description": "A revolutionary decentralized gaming experience.",
@@ -74,7 +74,7 @@ POST http://localhost:3000/events
 Content-Type: application/json
 
 {
-  "creator_id": "5139ad64-31b4-4842-a43d-002dcc5e4816",
+  "creator_address": "0x1234567890abcdef1234567890abcdef12345678",
   "name": "My Tech Conference 2025",
   "description": "A conference about the future of technology.",
   "start_time": "2025-12-01T09:00:00Z",

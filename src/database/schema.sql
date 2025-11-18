@@ -35,7 +35,7 @@ CREATE TABLE users (
 -- campaigns table
 CREATE TABLE campaigns (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    creator_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    creator_address VARCHAR(66) NOT NULL REFERENCES users(wallet_address) ON DELETE CASCADE,
     on_chain_object_id VARCHAR(255) UNIQUE,
     title VARCHAR(255) NOT NULL,
     short_description VARCHAR(255),
@@ -99,7 +99,7 @@ CREATE TABLE event_gallery_images (
 -- events table
 CREATE TABLE events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    creator_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    creator_address VARCHAR(66) NOT NULL REFERENCES users(wallet_address) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     start_time TIMESTAMPTZ NOT NULL,
@@ -187,8 +187,8 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 -- Indexing Strategy
 -- Foreign Keys
-CREATE INDEX ON campaigns (creator_id);
-CREATE INDEX ON events (creator_id);
+CREATE INDEX ON campaigns (creator_address);
+CREATE INDEX ON events (creator_address);
 CREATE INDEX ON campaign_story_sections (campaign_id);
 CREATE INDEX ON campaign_roadmap_phases (campaign_id);
 CREATE INDEX ON campaign_team_members (campaign_id);

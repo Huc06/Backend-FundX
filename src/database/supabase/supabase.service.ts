@@ -30,7 +30,7 @@ export class SupabaseService implements IDatabaseService, OnModuleInit {
     const { data, error } = await this.client.rpc(
       'create_campaign_with_details',
       {
-        p_creator_id: campaign.creator_id,
+        p_creator_address: campaign.creator_address,
         p_on_chain_object_id: campaign.on_chain_object_id,
         p_title: campaign.title,
         p_short_description: campaign.short_description,
@@ -58,7 +58,7 @@ export class SupabaseService implements IDatabaseService, OnModuleInit {
 
   async createEventWithDetails(event: any): Promise<any> {
     const { data, error } = await this.client.rpc('create_event_with_details', {
-      p_creator_id: event.creator_id,
+      p_creator_address: event.creator_address,
       p_name: event.name,
       p_description: event.description,
       p_start_time: event.start_time,
@@ -154,23 +154,10 @@ export class SupabaseService implements IDatabaseService, OnModuleInit {
   }
 
   async getCampaignsByCreator(creatorAddress: string): Promise<any[]> {
-    // This assumes `creatorAddress` is the `wallet_address` on the `users` table.
-    // We need to join with the `users` table.
-    const { data: user, error: userError } = await this.client
-      .from('users')
-      .select('id')
-      .eq('wallet_address', creatorAddress)
-      .single();
-    if (userError) {
-      this.logger.error(userError);
-      if (userError.code === 'PGRST116') return [];
-      throw new Error(userError.message);
-    }
-
     const { data, error } = await this.client
       .from('campaigns')
       .select('*')
-      .eq('creator_id', user.id);
+      .eq('creator_address', creatorAddress);
     if (error) {
       this.logger.error(error);
       throw new Error(error.message);
