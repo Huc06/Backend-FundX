@@ -8,6 +8,7 @@ CREATE OR REPLACE FUNCTION create_event_with_details(
     p_timezone VARCHAR,
     p_location VARCHAR,
     p_visibility VARCHAR,
+    p_theme VARCHAR,
     p_target_amount DECIMAL,
     p_reward_type reward_type,
     p_capacity INTEGER,
@@ -26,11 +27,11 @@ BEGIN
     -- Insert into events table
     INSERT INTO events (
         creator_address, name, description, start_time, end_time, funding_deadline,
-        timezone, location, visibility, target_amount, reward_type, capacity,
+        timezone, location, visibility, theme, target_amount, reward_type, capacity,
         ticket_price, status
     ) VALUES (
         p_creator_address, p_name, p_description, p_start_time, p_end_time, p_funding_deadline,
-        p_timezone, p_location, p_visibility, p_target_amount, p_reward_type, p_capacity,
+        p_timezone, p_location, p_visibility, p_theme, p_target_amount, p_reward_type, p_capacity,
         p_ticket_price, 'pending'
     ) RETURNING id INTO v_event_id;
 

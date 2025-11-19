@@ -60,7 +60,7 @@ export class SupabaseService implements IDatabaseService, OnModuleInit {
     const { data, error } = await this.client.rpc('create_event_with_details', {
       p_creator_address: event.creator_address,
       p_name: event.name,
-      p_description: event.description,
+      p_description: event.description || null,
       p_start_time: event.start_time,
       p_end_time: event.end_time,
       p_funding_deadline: event.funding_deadline,
@@ -70,7 +70,7 @@ export class SupabaseService implements IDatabaseService, OnModuleInit {
       p_theme: event.theme,
       p_target_amount: event.target_amount,
       p_reward_type: event.reward_type,
-      p_capacity: event.capacity,
+      p_capacity: event.capacity || null,
       p_ticket_price: event.ticket_price,
       p_milestones: event.milestones,
       p_services: event.services,
