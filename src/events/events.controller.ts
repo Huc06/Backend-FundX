@@ -58,6 +58,7 @@ export class EventsController {
         is_success: true,
         data: [
           {
+            on_chain_object_id: '0x1234567890abcdef',
             event_id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
             creator_id: '00000000-0000-0000-0000-000000000000',
             name: 'My Tech Conference 2025',
@@ -110,6 +111,7 @@ export class EventsController {
       example: {
         is_success: true,
         data: {
+          on_chain_object_id: '0x1234567890abcdef',
           event_id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
           creator_id: '00000000-0000-0000-0000-000000000000',
           name: 'My Tech Conference 2025',
